@@ -1,0 +1,19 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "refapp-access-token",
+      "description": "Keycloak access token for Referentiel Applications",
+      "password": true
+    }
+  ],
+  "servers": {
+    "refappOpenapi": {
+      "type": "http",
+      "url": "http://localhost:9000/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:refapp-access-token}"
+      }
+    }
+  }
+}
