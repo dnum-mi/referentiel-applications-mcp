@@ -107,15 +107,13 @@ Cela permet d'utiliser le serveur deja demarre sans lancer un nouveau process MC
 Variables du service refapp-mcp:
 
 - SWAGGER_URL: URL absolue du Swagger/OpenAPI RefApp (JSON ou YAML)
-- MCP_HOST: host d'ecoute du serveur MCP (defaut code: 127.0.0.1)
-- MCP_PORT: port d'ecoute du serveur MCP (defaut code: 9000)
+
+Le serveur MCP ecoute toujours sur `0.0.0.0:9000`.
 
 Exemple actuel:
 
 ```yaml
 SWAGGER_URL: http://host.docker.internal:3500/api/v2/swagger/json
-MCP_HOST: 0.0.0.0
-MCP_PORT: 9000
 ```
 
 ## Lancement sans Open Web UI

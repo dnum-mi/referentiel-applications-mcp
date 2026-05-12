@@ -2,8 +2,6 @@ services:
   refapp-mcp:
     build: .
     environment:
-      MCP_HOST: 0.0.0.0
-      MCP_PORT: 9000
       SWAGGER_URL: http://host.docker.internal:3500/api/v2/swagger/json
     ports:
       - "9000:9000"
