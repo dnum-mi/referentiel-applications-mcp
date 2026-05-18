@@ -6,9 +6,10 @@ from urllib.parse import urlparse
 import httpx
 import yaml
 from fastmcp import FastMCP
-from fastmcp.server.dependencies import get_access_token, get_http_headers
+from fastmcp.server.dependencies import get_http_headers
 
 DEFAULT_SWAGGER_URL = "http://host.docker.internal:3000/openapi/swagger.yaml"
+REFAPP_API_TOKEN_HEADER = "x-refapp-token"
 
 
 def _default_api_base_url(swagger_url: str) -> str:
@@ -32,27 +33,16 @@ def _load_openapi_spec(swagger_url: str) -> dict:
 
 
 class _TokenAwareClient(httpx.AsyncClient):
-    """httpx client that injects the current Bearer token before sending."""
+    """httpx client that forwards incoming auth context to RefApp."""
 
     def __init__(self, base_url: str):
         super().__init__(base_url=base_url)
 
-    @staticmethod
-    def _resolve_bearer_token() -> str | None:
-        access_token = get_access_token()
-        if access_token and access_token.token:
-            return access_token.token
-
-        headers = get_http_headers(include={"authorization"})
-        auth_header = headers.get("authorization", "")
-        if auth_header.lower().startswith("bearer "):
-            return auth_header.split(" ", 1)[1].strip() or None
-        return None
-
     async def send(self, request: httpx.Request, *args, **kwargs) -> httpx.Response:
-        token = self._resolve_bearer_token()
-        if token and "Authorization" not in request.headers:
-            request.headers["Authorization"] = f"Bearer {token}"
+        headers = get_http_headers(include={REFAPP_API_TOKEN_HEADER})
+        token = headers.get(REFAPP_API_TOKEN_HEADER, "").strip()
+        if token:
+            request.headers[REFAPP_API_TOKEN_HEADER] = token
         return await super().send(request, *args, **kwargs)
 
 

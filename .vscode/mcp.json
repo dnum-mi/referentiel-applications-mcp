@@ -2,8 +2,8 @@
   "inputs": [
     {
       "type": "promptString",
-      "id": "refapp-access-token",
-      "description": "Keycloak access token for Referentiel Applications",
+      "id": "refapp-token",
+      "description": "Token RefApp (depuis Profil > Mes tokens dans l'interface)",
       "password": true
     }
   ],
@@ -12,7 +12,7 @@
       "type": "http",
       "url": "http://localhost:9000/mcp",
       "headers": {
-        "x-refapp-token": "${input:refapp-access-token}"
+        "x-refapp-token": "${input:refapp-token}"
       }
     }
   }

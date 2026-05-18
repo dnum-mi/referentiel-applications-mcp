@@ -14,18 +14,18 @@ services:
       - "host.docker.internal:host-gateway"
     ports:
       - "8180:8080"
+    volumes:
+      - open-webui:/app/backend/data
     environment:
       OPENAI_API_BASE_URL: ${LLM_API_BASE_URL:-https://api.openai.com/v1}
       OPENAI_API_KEY: ${LLM_API_KEY:-}
-      OPENID_PROVIDER_URL: http://host.docker.internal:8082/realms/referentiel-applications/.well-known/openid-configuration
-      OPENID_REDIRECT_URI: http://localhost:8180/oauth/oidc/callback
-      OAUTH_CLIENT_ID: referentiel-applications
-      OAUTH_CLIENT_SECRET: change-me
-      OAUTH_MERGE_ACCOUNTS_BY_EMAIL: "true"
-      ENABLE_OAUTH_SIGNUP: "true"
+      WEBUI_AUTH: "false"
       DEFAULT_USER_ROLE: "user"
       ENABLE_LOGIN_FORM: "false"
       ENABLE_SIGNUP: "false"
-      TOOL_SERVER_CONNECTIONS: >-
-        [{"type":"mcp","url":"http://refapp-mcp:9000/mcp","path":"/mcp","auth_type":"system_oauth","key":"","headers":{},"config":{"enable":true,"access_grants":[{"principal_type":"user","principal_id":"*","permission":"read"}]},"info":{"id":"refapp-mcp","name":"Refapp MCP","description":"refapp mcp server"}}]
       ENABLE_ONBOARDING: "false"
+      TOOL_SERVER_CONNECTIONS: >-
+        [{"url":"http://refapp-mcp:9000/mcp","path":"/mcp","type":"mcp","auth_type":"bearer","key":"${REFAPP_TOKEN:-}","config":{"enable":true},"info":{"id":"refapp-mcp","name":"RefApp MCP"}}]
+
+volumes:
+  ollama:
