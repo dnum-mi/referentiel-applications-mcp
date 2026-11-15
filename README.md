@@ -8,6 +8,7 @@ Serveur MCP FastMCP qui expose l'API RefApp en outils MCP a partir de son Swagge
 - RefApp backend accessible depuis Docker (ex: `host.docker.internal:3500`)
 - Un token RefApp (**Profil > Mes tokens** dans RefApp)
 - Optionnel: un token API LLM compatible OpenAI
+- Ne pas autoriser les méthodes HTTP permettant des mises à jour du référentiel
 
 ## Demarrage rapide
 
