@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/dnum-mi/referentiel-applications-mcp/compare/v0.2.0...v0.2.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* using-only-method-get-for-api ([6ee8d01](https://github.com/dnum-mi/referentiel-applications-mcp/commit/6ee8d012da41d6e8a7de7b647a48a388025eeab6))
+* using-only-method-get-for-api ([6ee8d01](https://github.com/dnum-mi/referentiel-applications-mcp/commit/6ee8d012da41d6e8a7de7b647a48a388025eeab6))
+
 ## [0.2.0](https://github.com/dnum-mi/referentiel-applications-mcp/compare/v0.1.0...v0.2.0) (2026-05-18)
 
 
