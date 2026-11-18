@@ -53,7 +53,7 @@ def _keep_get_operations_only(spec: dict) -> dict:
     return filtered
 
 
-REFAPP_ME_PATH = "/api/v2/me"
+REFAPP_ME_PATH = "/api/v2/users/me"
 
 
 class _TokenAwareClient(httpx.AsyncClient):
