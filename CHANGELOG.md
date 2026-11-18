@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/dnum-mi/referentiel-applications-mcp/compare/v0.2.1...v0.2.2) (2026-11-18)
+
+
+### Bug Fixes
+
+* endpoint-users-me ([654eec5](https://github.com/dnum-mi/referentiel-applications-mcp/commit/654eec549ae5db46d0aac80b6488307b6dca095e))
+
 ## [0.2.1](https://github.com/dnum-mi/referentiel-applications-mcp/compare/v0.2.0...v0.2.1) (2026-11-15)
 
 
