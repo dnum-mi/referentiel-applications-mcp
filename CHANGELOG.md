@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/dnum-mi/referentiel-applications-mcp/compare/v0.2.2...v0.2.3) (2026-11-19)
+
+
+### Bug Fixes
+
+* bug-not-authorize  ([f74d20c](https://github.com/dnum-mi/referentiel-applications-mcp/commit/f74d20c9a295f6520cc5ffe8a8d6b16b2518d2b1))
+
 ## [0.2.2](https://github.com/dnum-mi/referentiel-applications-mcp/compare/v0.2.1...v0.2.2) (2026-11-18)
 
 
