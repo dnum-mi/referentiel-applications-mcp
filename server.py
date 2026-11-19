@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 from urllib.parse import urlparse
 
@@ -10,6 +11,8 @@ from fastmcp.server.dependencies import get_http_headers
 
 DEFAULT_SWAGGER_URL = "http://host.docker.internal:3000/openapi/swagger.yaml"
 REFAPP_API_TOKEN_HEADER = "x-refapp-token"
+
+logger = logging.getLogger("refapp-mcp")
 
 
 def _default_api_base_url(swagger_url: str) -> str:
@@ -60,25 +63,51 @@ class _TokenAwareClient(httpx.AsyncClient):
     """httpx client that validates then forwards incoming auth context to RefApp."""
 
     def __init__(self, base_url: str):
-        super().__init__(base_url=base_url)
+        super().__init__(base_url=base_url, follow_redirects=True, timeout=30.0)
         self._validated_tokens: set[str] = set()
+
+    @staticmethod
+    def _incoming_token() -> str:
+        """Token RefApp de la requete MCP entrante.
+
+        Accepte le header `x-refapp-token` (VS Code) ou `Authorization: Bearer`
+        (Open WebUI avec auth_type "bearer").
+        """
+        headers = get_http_headers(include={REFAPP_API_TOKEN_HEADER, "authorization"})
+        token = headers.get(REFAPP_API_TOKEN_HEADER, "").strip()
+        if not token:
+            auth = headers.get("authorization", "").strip()
+            if auth.lower().startswith("bearer "):
+                token = auth[7:].strip()
+        return token.strip('"')
 
     async def _is_token_valid(self, token: str) -> bool:
         if token in self._validated_tokens:
             return True
-        me_url = str(self.base_url).rstrip("/") + REFAPP_ME_PATH
-        request = httpx.Request("GET", me_url, headers={REFAPP_API_TOKEN_HEADER: token})
+        request = self.build_request(
+            "GET",
+            REFAPP_ME_PATH,
+            headers={REFAPP_API_TOKEN_HEADER: token, "Accept": "application/json"},
+        )
         response = await super().send(request)
-        await response.aclose()
-        if 200 <= response.status_code < 300:
-            self._validated_tokens.add(token)
-            return True
-        return False
+        try:
+            if response.is_success:
+                self._validated_tokens.add(token)
+                return True
+            body = (await response.aread())[:300]
+            logger.warning(
+                "Validation du token RefApp refusee: GET %s -> %s %r",
+                request.url, response.status_code, body,
+            )
+            return False
+        finally:
+            await response.aclose()
 
     async def send(self, request: httpx.Request, *args, **kwargs) -> httpx.Response:
-        headers = get_http_headers(include={REFAPP_API_TOKEN_HEADER})
-        token = headers.get(REFAPP_API_TOKEN_HEADER, "").strip()
-        if token:
+        token = self._incoming_token()
+        if not token:
+            logger.warning("Aucun token RefApp recu (ni x-refapp-token ni Authorization: Bearer)")
+        else:
             if not await self._is_token_valid(token):
                 return httpx.Response(
                     401,
@@ -101,6 +130,7 @@ mcp = FastMCP.from_openapi(
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     mcp.run(
         transport="http",
         host="0.0.0.0",
